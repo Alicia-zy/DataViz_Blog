@@ -1,19 +1,36 @@
 [
   {
-    "path": "posts/welcome/",
-    "title": "Welcome to DataViz Blog",
-    "description": "Welcome to our new blog, DataViz Blog. We hope you enjoy \nreading what we have to say!",
+    "path": "posts/2021-05-24-my-first-blog/",
+    "title": "My first blog",
+    "description": "A short description of the post.",
     "author": [
       {
-        "name": "Nora Jones",
-        "url": "https://example.com/norajones"
+        "name": "Alicia Zhang",
+        "url": "https://www.linkedin.com/in/alicia-zhang-22a1a6140/"
+      }
+    ],
+    "date": "2021-05-24",
+    "categories": [],
+    "contents": "\n1.0 Overview\nIn this article, we will show you how to plot a figure with multiple histograms by using ggplot2 and ggpubr packages.\n2.0 Installing and Launching R Packages\nBefore you get started, you are required:\nto start a new R project, and\nto create a new R Markdown document.\n\nNext, you will use the code chunk below to install and launch ggpubr and tidyverse in RStudio.\nInsert image. \nR code\npackages = c(‘ggpubr’, ‘tidyverse’)\nfor(p in packages){library if(!require(p, character.only = T)){ install.packages(p) } library(p, character.only = T) }\n3.0 Importing and Preparing The Data Set\nIn this hands-on exercise, the Wine Quality Data Set of UCI Machine Learning Repository will be used. The data set consists of 13 variables and 6497 observations. For the purpose of this exercise, we have combined the red wine and white wine data into one data file. It is called wine_quality and is in csv file format.\n3.1 Importing Data\nFirst, let us import the data into R by using read_csv() of readr package.\nR code\nwine <- read_csv(“data/wine_quality.csv”)\nNotice that beside quality and type, the rest of the variables are numerical and continuous data type.\n4.0 Univariate EDA with Histogram\nIn the figure below, multiple histograms are plottted by using ggplot() and geom_histogram() of ggplot2 package. Then, ggarrange() of ggpubr package is used to patch these histogram into a single figure to reveal the distribution of the selected variables in the wine quality data sets.\nRcode\nfa <- ggplot(data=wine, aes(x= fixed acidity)) + geom_histogram(bins=20, color=“black”, fill=“light blue”) va <- ggplot(data=wine, aes(x= volatile acidity)) + geom_histogram(bins=20, color=“black”, fill=“light blue”) ca <- ggplot(data=wine, aes(x= citric acid)) + geom_histogram(bins=20, color=“black”, fill=“light blue”) rs <- ggplot(data=wine, aes(x= residual sugar)) + geom_histogram(bins=20, color=“black”, fill=“light blue”) ch <- ggplot(data=wine, aes(x= chlorides)) + geom_histogram(bins=20, color=“black”, fill=“light blue”) fSO2 <- ggplot(data=wine, aes(x= free sulfur dioxide)) + geom_histogram(bins=20, color=“black”, fill=“light blue”) tSO2 <- ggplot(data=wine, aes(x= total sulfur dioxide)) + geom_histogram(bins=20, color=“black”, fill=“light blue”) density <- ggplot(data=wine, aes(x= density)) + geom_histogram(bins=20, color=“black”, fill=“light blue”) pH <- ggplot(data=wine, aes(x= pH)) + geom_histogram(bins=20, color=“black”, fill=“light blue”) sulphates <- ggplot(data=wine, aes(x= sulphates)) + geom_histogram(bins=20, color=“black”, fill=“light blue”) alcohol <- ggplot(data=wine, aes(x= alcohol)) + geom_histogram(bins=20, color=“black”, fill=“light blue”)\nggarrange(fa, va, ca, rs, ch, fSO2, tSO2, density, pH, sulphates, alcohol, ncol = 4, nrow = 3)\n\n\n\n",
+    "preview": {},
+    "last_modified": "2021-05-24T16:59:19+08:00",
+    "input_file": "my-first-blog.knit.md"
+  },
+  {
+    "path": "posts/welcome/",
+    "title": "Welcome to DataViz Blog",
+    "description": "Welcome to my new blog, DataViz Blog. I hope you enjoy \nreading what I have to say!",
+    "author": [
+      {
+        "name": "Alicia Zhang",
+        "url": "https://www.linkedin.com/in/alicia-zhang-22a1a6140/"
       }
     ],
     "date": "2021-05-22",
     "categories": [],
     "contents": "\n\n\n\n",
     "preview": {},
-    "last_modified": "2021-05-22T10:02:28+08:00",
+    "last_modified": "2021-05-24T16:32:18+08:00",
     "input_file": {}
   }
 ]

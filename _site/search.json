@@ -3,17 +3,17 @@
     {
       "path": "about.html",
       "title": "About this blog",
-      "description": "Some additional details about the blog",
+      "description": "This blog was created for the Singapore Management University, Masters of IT in Business, ISSS608: Visual Analytics module in AY2020/21 Term 3",
       "author": [],
       "contents": "\n\n\n\n",
-      "last_modified": "2021-05-22T10:13:59+08:00"
+      "last_modified": "2021-05-24T16:36:37+08:00"
     },
     {
       "path": "index.html",
       "title": "DataViz Blog",
       "author": [],
       "contents": "\n\n\n\n",
-      "last_modified": "2021-05-22T10:14:00+08:00"
+      "last_modified": "2021-05-24T16:36:48+08:00"
     }
   ],
   "collections": ["posts/posts.json"]
