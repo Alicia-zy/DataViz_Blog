@@ -1,0 +1,24 @@
+---
+title: "DataVisual Makeover 1"
+description: |
+  A short description of the post.
+author:
+  - name: Alicia Zhang
+    url: https://www.linkedin.com/in/alicia-zhang-22a1a6140/
+date: 05-29-2021
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# 1.0 Critique of Visualisation
+
+## 1.1 Clarity
+
+### 1.1.1 
+
