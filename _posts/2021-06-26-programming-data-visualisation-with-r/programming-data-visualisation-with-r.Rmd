@@ -1,0 +1,120 @@
+---
+title: "Programming Data Visualisation with R"
+description: |
+  R is a powerful tool for data science and visualization. Tidyverse which is an collection of R packages is higly useful and recommended. All packages share an underlying design philosophy, grammar, and data structures. We will explore data visualisation using tidyverse in this blog. 
+  
+author:
+  - name: Alicia Zhang
+    url: https://www.linkedin.com/in/alicia-zhang-22a1a6140/
+    affiliation: School of Computing and Information Systems, Singapore Management University
+    affiliation_url: https://scis.smu.edu.sg/
+date: 06-26-2021
+output:
+  distill::distill_article:
+    toc: true
+    toc_depth: 3
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, error = FALSE)
+```
+
+# Installing and loading the required libraries
+
+Use the below code to install and load packages. Whenever you have new packages, you can add them in the list of packages. It's an easier way to load multiple packages. 
+
+```{r}
+packages = c('DT','ggiraph',
+             'plotly','tidyverse')
+for (p in packages){
+  if(!require(p,character.only = T)){
+    install.packages(p)
+  }
+  library(p,character.only = T)
+}
+```
+
+# Importing Data
+
+The code chunk below imports exam_data.csv into R environment using read_csv() function from readr package.
+
+```{r}
+exam_data <- read_csv("data/Exam_data.csv")
+```
+
+# Introducing ggplot2
+
+ggplot 2 graphic
+ggplot 2 is powerful way of thinking about visualisation, as a way of mapping between variables and the visual properties of geometric objects that you can perceive. 
+
+## bar chart
+```{r}
+ggplot(exam_data, 
+       aes(x=RACE)) +
+  geom_bar()
+```
+
+## dotplot
+```{r}
+ggplot(exam_data, 
+       aes(x=MATHS,
+           fill = RACE)) +
+  geom_dotplot(binwidth=2.5, #change the binwidth to 2.5
+               dotsize=0.5) +
+  scale_y_continuous(NULL,breaks = NULL) #turn off the y-axis
+```
+
+
+## histgram
+```{r}
+ggplot(exam_data, 
+       aes(x=MATHS))+
+  geom_histogram(bins=20, #default bin is 30
+                 color='black',
+                 fill = 'light blue')
+```
+
+
+## histgram by gender
+```{r}
+ggplot(exam_data, 
+       aes(x=MATHS,
+           fill = GENDER))+
+  geom_histogram(bins=20, #default bin is 30
+                 color='grey30')
+```
+
+
+## boxplot
+```{r}
+ggplot(exam_data, 
+       aes(y = MATHS,
+           x = GENDER))+
+  geom_boxplot() +
+  geom_point(position='jitter', #randomly distribute the data points
+             size = 0.5)
+```
+
+# Interactive with R using ggiraph and plotlyr 
+## ggiraph Methods
+create an interactive dotplot
+
+```{r}
+p <- ggplot(exam_data,
+            aes(x = MATHS)) +
+  geom_dotplot_interactive(
+    aes(tooltip = ID),
+    stackgroups = TRUE,
+    binwidth = 1,
+    method = "histodot") +
+  scale_y_continuous(NULL, breaks = NULL)
+
+girafe(
+  ggobj = p,
+  width_svg = 6,
+  height_svg = 6*0.5
+)
+  
+```

@@ -1,5 +1,22 @@
 [
   {
+    "path": "posts/2021-06-26-programming-data-visualisation-with-r/",
+    "title": "Programming Data Visualisation with R",
+    "description": "R is a powerful tool for data science and visualization. Tidyverse which is an collection of R packages is higly useful and recommended. All packages share an underlying design philosophy, grammar, and data structures. We will explore data visualisation using tidyverse in this blog.",
+    "author": [
+      {
+        "name": "Alicia Zhang",
+        "url": "https://www.linkedin.com/in/alicia-zhang-22a1a6140/"
+      }
+    ],
+    "date": "2021-06-26",
+    "categories": [],
+    "contents": "\n\nContents\nInstalling and loading the required libraries\nImporting Data\nIntroducing ggplot2bar chart\ndotplot\nhistgram\nhistgram by gender\nboxplot\n\nInteractive with R using ggiraph and plotlyrggiraph Methods\n\n\nInstalling and loading the required libraries\nUse the below code to install and load packages. Whenever you have new packages, you can add them in the list of packages. It’s an easier way to load multiple packages.\n\n\npackages = c('DT','ggiraph',\n             'plotly','tidyverse')\nfor (p in packages){\n  if(!require(p,character.only = T)){\n    install.packages(p)\n  }\n  library(p,character.only = T)\n}\n\n\n\nImporting Data\nThe code chunk below imports exam_data.csv into R environment using read_csv() function from readr package.\n\n\nexam_data <- read_csv(\"data/Exam_data.csv\")\n\n\n\nIntroducing ggplot2\nggplot 2 graphic ggplot 2 is powerful way of thinking about visualisation, as a way of mapping between variables and the visual properties of geometric objects that you can perceive.\nbar chart\n\n\nggplot(exam_data, \n       aes(x=RACE)) +\n  geom_bar()\n\n\n\n\ndotplot\n\n\nggplot(exam_data, \n       aes(x=MATHS,\n           fill = RACE)) +\n  geom_dotplot(binwidth=2.5, #change the binwidth to 2.5\n               dotsize=0.5) +\n  scale_y_continuous(NULL,breaks = NULL) #turn off the y-axis\n\n\n\n\nhistgram\n\n\nggplot(exam_data, \n       aes(x=MATHS))+\n  geom_histogram(bins=20, #default bin is 30\n                 color='black',\n                 fill = 'light blue')\n\n\n\n\nhistgram by gender\n\n\nggplot(exam_data, \n       aes(x=MATHS,\n           fill = GENDER))+\n  geom_histogram(bins=20, #default bin is 30\n                 color='grey30')\n\n\n\n\nboxplot\n\n\nggplot(exam_data, \n       aes(y = MATHS,\n           x = GENDER))+\n  geom_boxplot() +\n  geom_point(position='jitter', #randomly distribute the data points\n             size = 0.5)\n\n\n\n\nInteractive with R using ggiraph and plotlyr\nggiraph Methods\ncreate an interactive dotplot\n\n\np <- ggplot(exam_data,\n            aes(x = MATHS)) +\n  geom_dotplot_interactive(\n    aes(tooltip = ID),\n    stackgroups = TRUE,\n    binwidth = 1,\n    method = \"histodot\") +\n  scale_y_continuous(NULL, breaks = NULL)\n\ngirafe(\n  ggobj = p,\n  width_svg = 6,\n  height_svg = 6*0.5\n)\n\n\npreserve8c6a5e648c4fda75\n\n\n\n\n",
+    "preview": "posts/2021-06-26-programming-data-visualisation-with-r/programming-data-visualisation-with-r_files/figure-html5/unnamed-chunk-3-1.png",
+    "last_modified": "2021-06-26T12:23:20+08:00",
+    "input_file": "programming-data-visualisation-with-r.knit.md"
+  },
+  {
     "path": "posts/2021-06-16-data-makeover-2/",
     "title": "DataViz Makeover 2",
     "description": "In this post, we present a trade data use case applying the appropriate interactive visual analytics techniques using Tableau. We will critique the visualisation and propose an alternative to improve the quality of message delivered.",
