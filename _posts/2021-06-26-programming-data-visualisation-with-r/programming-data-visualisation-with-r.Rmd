@@ -26,7 +26,8 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, error = FALSE)
 Use the below code to install and load packages. Whenever you have new packages, you can add them in the list of packages. It's an easier way to load multiple packages. 
 
 ```{r}
-packages = c('DT','ggiraph',
+
+packages = c('DT','ggiraph','patchwork',
              'plotly','tidyverse')
 for (p in packages){
   if(!require(p,character.only = T)){
@@ -41,6 +42,7 @@ for (p in packages){
 The code chunk below imports exam_data.csv into R environment using read_csv() function from readr package.
 
 ```{r}
+
 exam_data <- read_csv("data/Exam_data.csv")
 ```
 
@@ -114,7 +116,204 @@ p <- ggplot(exam_data,
 girafe(
   ggobj = p,
   width_svg = 6,
-  height_svg = 6*0.5
+  height_svg = 6*0.618
 )
   
+```
+
+Hover effects
+```{r}
+p <- ggplot(exam_data,
+            aes(x = MATHS)) +
+  geom_dotplot_interactive(
+    (aes(data_id = CLASS)),
+    stackgroups = TRUE,
+    binwidth = 1,
+    method = "histodot") +
+  scale_y_continuous(NULL, breaks = NULL)
+
+girafe(
+  ggobj = p,
+  width_svg = 6,
+  height_svg = 6*0.618
+)
+  
+```
+
+Combine tooltip and hover effect
+```{r}
+p <- ggplot(exam_data,
+            aes(x = MATHS)) +
+  geom_dotplot_interactive(
+    (aes(data_id = CLASS,
+         tooltip = CLASS)),
+    stackgroups = TRUE,
+    binwidth = 1,
+    method = "histodot") +
+  scale_y_continuous(NULL, breaks = NULL)
+
+girafe(
+  ggobj = p,
+  width_svg = 6,
+  height_svg = 6*0.618
+)
+  
+```
+
+## Plotly Methods
+Plotly has richer features than girraph. It has an important and useful function "Select". 
+
+```{r}
+
+plot_ly(data=exam_data,
+        x=~MATHS,
+        y=~ENGLISH)
+```
+
+Adding in anther visual element color. Can map with either qualitative or quantitative variables.Legend can be used as the selection criteria. 
+
+```{r}
+
+plot_ly(data=exam_data,
+        x=~MATHS, 
+        y=~ENGLISH,
+        color=~RACE)
+```
+
+Changing colour pallete
+
+```{r}
+
+plot_ly(data=exam_data,
+        x=~MATHS, 
+        y=~ENGLISH,
+        color=~RACE,
+        colors="Set1")
+
+```
+
+
+Customise colour scheme
+
+```{r}
+
+pal <- c("red","yellow","blue","green")
+plot_ly(data=exam_data,
+        x=~MATHS, 
+        y=~ENGLISH,
+        color=~RACE,
+        colors=pal)
+```
+
+Customise tooltip
+Two good things about the tooltip in Plotly. One is that tooltip box will change the position automatically based on the space. Another is it will change the text colors automatically to provide better contrast. For example, text color become white if the background is red or blue.  
+
+```{r}
+
+plot_ly(data=exam_data,
+        x=~MATHS, 
+        y=~ENGLISH,
+        text =~paste("Student ID:", ID, 
+                     "<br>Class:",CLASS), #<br>: start a new line
+        color=~RACE,
+        colors="Set1")
+```
+
+Working with Layout
+Plotly provides inking feature. For example, x-axis and y-axis are black and the grid lines are grey.
+
+```{r}
+
+plot_ly(data=exam_data,
+        x=~MATHS, 
+        y=~ENGLISH,
+        text =~paste("Student ID:", ID, 
+                     "<br>Class:",CLASS), #<br>: start a new line
+        color=~RACE,
+        colors="Set1") %>%
+  layout(title='English Score versus Math Score',
+         xaxis=list(range=c(0,100)),
+         yaxis=list(range=c(0,100)))
+```
+
+
+
+Creating an unteractive scatter plot: ggplotly() method
+
+```{r}
+
+p <- ggplot(data=exam_data,
+        aes(x=MATHS, 
+        y=ENGLISH))+
+  geom_point(size=1) +
+  coord_cartesian(xlim = c(0,100),
+                  ylim=c(0,100))
+ggplotly(p)
+```
+
+Coordinated multiple veiws with plotly
+```{r}
+
+p1 <- ggplot(data=exam_data,
+        aes(x=MATHS, 
+        y=ENGLISH))+
+  geom_point(size=1) +
+  coord_cartesian(xlim = c(0,100),
+                  ylim=c(0,100))
+
+p2 <- ggplot(data=exam_data,
+        aes(x=MATHS, 
+        y=SCIENCE))+
+  geom_point(size=1) +
+  coord_cartesian(xlim = c(0,100),
+                  ylim=c(0,100))
+subplot(ggplotly(p1),
+        ggplotly(p2))
+```
+
+Coordinated multiple veiws with plotly
+
+```{r}
+
+d <- highlight(exam_data) #shared data
+
+p1 <- ggplot(data=d,
+        aes(x=MATHS, 
+        y=ENGLISH))+
+  geom_point(size=1) +
+  coord_cartesian(xlim = c(0,100),
+                  ylim=c(0,100))
+
+p2 <- ggplot(data=d,
+        aes(x=MATHS, 
+        y=SCIENCE))+
+  geom_point(size=1) +
+  coord_cartesian(xlim = c(0,100),
+                  ylim=c(0,100))
+subplot(ggplotly(p1),
+        ggplotly(p2))
+```
+
+Interactive Data Table: DT package
+
+```{r}
+
+DT::datatable(exam_data)
+```
+
+Linked brushing: crosstalk method
+
+```{r}
+
+d <- highlight_key(exam_data)
+p <- ggplot(d,
+            aes(ENGLISH,
+                MATHS)) +
+  geom_point(size=1) +
+  coord_cartesian(xlim=c(0,100),
+                  ylim=c(0,100))
+gg <- highlight(ggplotly(p),"plotly_selected") #implement highlight option called plotly_selected.  
+crosstalk::bscols(gg,
+                  DT::datatable(d),
+                  widths = 5)
 ```

@@ -5,6 +5,8 @@ description: |
 author:
   - name: Alicia Zhang
     url: https://www.linkedin.com/in/alicia-zhang-22a1a6140/
+    affiliation: School of Computing and Information Systems, Singapore Management University
+    affiliation_url: https://scis.smu.edu.sg/
 date: 05-28-2021
 output:
   distill::distill_article:

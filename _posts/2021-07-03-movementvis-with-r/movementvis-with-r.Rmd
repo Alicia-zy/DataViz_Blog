@@ -1,0 +1,135 @@
+---
+title: "MovementVis with R"
+description: |
+  We will learn how to visualise movements by using appropriate R packages in this blog.
+author:
+  - name: Alicia Zhang
+    url: https://www.linkedin.com/in/alicia-zhang-22a1a6140/
+    affiliation: School of Computing and Information Systems, Singapore Management University
+    affiliation_url: https://scis.smu.edu.sg/
+date: 06-26-2021
+output:
+  distill::distill_article:
+    toc: true
+    toc_depth: 3
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, error = FALSE)
+```
+
+# Installing and loading the required libraries
+
+Use the below code to install and load packages. 
+
+```{r}
+
+packages = c('raster','sf','clock',
+             'tmap','tidyverse','rgdal')
+for (p in packages){
+  if(!require(p,character.only = T)){
+    install.packages(p)
+  }
+  library(p,character.only = T)
+}
+```
+
+# Importing Raster file 
+
+```{r}
+
+ap <- raster("data/Geospatial/MC2-tourist.tif")
+ap
+```
+
+```{r}
+
+bgmap <- raster("data/Geospatial/MC2-tourist.tif")
+bgmap
+```
+
+# Plotting Raster Layer
+```{r}
+
+tmap_mode("plot") #plot: static version
+tm_shape(bgmap) +
+  tm_raster(bgmap,
+            legend.show = FALSE)
+```
+
+```{r}
+
+tm_shape(bgmap) + #data
+tm_rgb(bgmap,r=1,g=2,b=3,
+        alpha = NA,
+        saturation = 1,
+        interpolate = TRUE,
+         max.value = 255)
+```
+
+
+
+```{r}
+
+Abila_st <- st_read(dsn="data/Geospatial",
+                    layer="Abila")
+```
+
+# Importing Aspatial Data
+
+```{r}
+
+gps <- read_csv("data/aspatial/gps.csv")
+glimpse(gps)
+```
+
+converting Data-Time Field
+```{r}
+
+gps$Timestamp <- date_time_parse(gps$Timestamp, 
+                                 zone = "",
+                                 format="%m/%d/%Y %H:%M:%S") #function from clock package
+gps$id <- as_factor(gps$id) #from tidyverse package
+
+```
+
+converting Aspatial Data into a Simple Feature Data Frame
+```{r}
+
+gps_sf <- st_as_sf(gps,
+                   coords=c("long","lat"),
+                   crs=4326) # wgs84 geographic coordinate system
+
+```
+
+converting movement path from GPS Points
+```{r}
+
+gps_path <- gps_sf %>%
+  group_by(id) %>%
+  summarize(m=mean(Timestamp),
+            do_union=FALSE)%>%
+  st_cast("LINESTRING")
+
+```
+
+# Plotting the gps Paths
+
+```{r}
+
+gps_path_selected <- gps_path %>%
+  filter(id==1) 
+
+tmap_mode("view")
+tm_shape(bgmap) +
+tm_rgb(bgmap,r=1,g=2,b=3,
+        alpha = NA,
+        saturation = 1,
+        interpolate = TRUE,
+         max.value = 255)+
+  tm_shape(gps_path_selected) +
+  tm_lines()
+
+```
