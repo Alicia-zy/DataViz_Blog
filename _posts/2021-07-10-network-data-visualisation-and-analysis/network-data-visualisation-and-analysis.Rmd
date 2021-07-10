@@ -1,0 +1,335 @@
+---
+title: "Network Data Visualisation and Analysis"
+description: |
+  We will explore ways to visualize network data using R in this post.
+author:
+  - name: Alicia Zhang
+    url: https://www.linkedin.com/in/alicia-zhang-22a1a6140/
+    affiliation: School of Computing and Information Systems, Singapore Management University
+    affiliation_url: https://scis.smu.edu.sg/
+date: 07-10-2021
+output:
+  distill::distill_article:
+    toc: true
+    toc_depth: 3
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, error = FALSE)
+```
+
+# R graph objects
+    + network: Classes for Relational Data.
+    + igraph: Network Analysis and Visualzation. It's a wrapper of tidygraph.
+    + tidygraph: A Tidy API for Graph Manipulation.
+    + ggraph and visNetwork: to visualize graphs. 
+    
+# Installing and loading the required libraries
+
+Use the below code to install and load packages. 
+
+```{r}
+
+packages = c('igraph','tidygraph',
+             'ggraph','visNetwork',
+             'lubridate','clock',
+             'tidyverse')
+for (p in packages){
+  if(!require(p,character.only = T)){
+    install.packages(p)
+  }
+  library(p,character.only = T)
+}
+```
+
+# Importing network data from files 
+
+```{r}
+GAStech_nodes <- read_csv("data/GAStech_email_node.csv")
+GAStech_edges <- read_csv("data/GAStech_email_edge-v2.csv")
+
+```
+
+## Reviewing the imported data 
+
+SentDate is a character data instead of date data.
+```{r}
+glimpse(GAStech_edges)
+
+```
+
+# Wrangling time
+dmy() transforms the SentDate to Date data type
+wday() returns the day of the week as a decimal number or an ordered factor if label is TRUE
+
+```{r}
+GAStech_edges$SentDate = dmy(GAStech_edges$SentDate)
+GAStech_edges$Weekday = wday(GAStech_edges$SentDate,
+                             label = TRUE,
+                             abbr = FALSE)
+
+```
+
+# Wrangling attributes
+
+```{r}
+GAStech_edges_aggregated <- GAStech_edges %>%
+  filter(MainSubject == "Work related") %>%
+  group_by(source,target, Weekday)%>%
+  summarize(Weight = n())%>%
+  filter(source!=target)%>% #exclude people who wrote to themselves
+  filter(Weight > 1)%>% # exclude all nodes with weights less or equal to 1
+  ungroup
+```
+
+## Reviewing the new data set
+```{r}
+glimpse(GAStech_edges_aggregated)
+```
+
+# Using tbl_graph() to build tidygraph data model
+
+
+```{r}
+GAStech_graph <- tbl_graph(nodes = GAStech_nodes,
+                           edges = GAStech_edges_aggregated,
+                           directed = TRUE)
+GAStech_graph
+```
+
+## Reviewing the output tidygraph's graph object
+
+```{r}
+GAStech_graph
+```
+
+# Plotting network graphs
+
+## Plotting a basic network graph
+
+```{r}
+ggraph(GAStech_graph) +
+  geom_edge_link() +
+  geom_node_point()
+```
+
+## Changing the default newwork graph theme
+
+```{r}
+g <- ggraph(GAStech_graph) +
+  geom_edge_link(aes()) +
+  geom_node_point(aes()) 
+g + theme_graph() # remove grey background color
+```
+## Changing the coloring of the plot
+
+```{r}
+g <- ggraph(GAStech_graph) +
+  geom_edge_link(aes(colour=("grey50"))) +
+  geom_node_point(aes(colour="grey40")) 
+g + theme_graph()
+```
+
+## Fruchterman and Reingold layout
+
+```{r}
+g <- ggraph(GAStech_graph,
+            layout = "fr") +
+  geom_edge_link(aes()) +
+  geom_node_point(aes()) 
+g + theme_graph()
+```
+
+
+## Modifying network nodes
+
+```{r}
+g <- ggraph(GAStech_graph,
+            layout = "nicely") +
+  geom_edge_link(aes()) +
+  geom_node_point(aes(colour = Department,
+                      size=3)) 
+g + theme_graph()
+```
+
+
+## Modifying network edges
+
+```{r}
+g <- ggraph(GAStech_graph,
+            layout = "nicely") +
+  geom_edge_link(aes(width=Weight),
+                 alpha=0.2) +
+  scale_edge_width(range=c(0.1,5))+
+  geom_node_point(aes(colour=Department),
+                  size =3)
+g + theme_graph()
+```
+
+## Working with facet_edges()
+
+```{r}
+set_graph_style()
+
+g <- ggraph(GAStech_graph,
+            layout = "nicely") +
+  geom_edge_link(aes(width=Weight),
+                 alpha=0.2) +
+  scale_edge_width(range=c(0.1,5))+
+  geom_node_point(aes(colour=Department),
+                  size =2)
+g + facet_edges(~Weekday)
+```
+
+
+## change legend position 
+
+```{r}
+set_graph_style()
+
+g <- ggraph(GAStech_graph,
+            layout = "nicely") +
+  geom_edge_link(aes(width=Weight),
+                 alpha=0.2) +
+  scale_edge_width(range=c(0.1,5))+
+  geom_node_point(aes(colour=Department),
+                  size =2)+
+  theme(legend.position = "bottom")
+
+g + facet_edges(~Weekday)
+
+```
+
+## A framed facet graph
+```{r}
+set_graph_style()
+
+g <- ggraph(GAStech_graph,
+            layout = "nicely") +
+  geom_edge_link(aes(width=Weight),
+                 alpha=0.2) +
+  scale_edge_width(range=c(0.1,5))+
+  geom_node_point(aes(colour=Department),
+                  size =2)
+
+g + facet_edges(~Weekday)+
+  th_foreground(foreground = "grey80",
+                border = TRUE)+
+  theme(legend.position="bottom")
+
+```
+
+
+## Working with facet_nodes()
+```{r}
+set_graph_style()
+
+g <- ggraph(GAStech_graph,
+            layout = "nicely") +
+  geom_edge_link(aes(width=Weight),
+                 alpha=0.2) +
+  scale_edge_width(range=c(0.1,5))+
+  geom_node_point(aes(colour=Department),
+                  size =2)
+
+g + facet_nodes(~Department)+
+  th_foreground(foreground = "grey80",
+                border = TRUE)+
+  theme(legend.position="bottom")
+
+```
+
+# Network Metrics Analysis
+##  Computing centrality indices
+```{r}
+g <- GAStech_graph %>%
+  mutate(betweenness_centrality = centrality_betweenness())%>%
+  ggraph(layout="fr")+
+  geom_edge_link(aes(width=Weight),
+                 alpha=0.2) +
+  scale_edge_width(range=c(0.1,5))+
+  geom_node_point(aes(colour=Department,
+                  size = betweenness_centrality))
+
+g + theme_graph()
+
+```
+
+## Visualising network metrics
+```{r}
+g <- GAStech_graph %>%
+  ggraph(layout = "fr") +
+ geom_edge_link(aes(width=Weight),
+                 alpha=0.2) +
+  scale_edge_width(range=c(0.1,5))+
+  geom_node_point(aes(colour=Department,
+                      size=centrality_betweenness()))
+
+g + theme_graph()
+
+```
+
+## Visualising Community
+```{r}
+g <- GAStech_graph %>%
+  mutate(community = as.factor(group_edge_betweenness(weights=Weight, directed = TRUE)))%>%
+  ggraph(layout = "fr") +
+ geom_edge_link(aes(width=Weight),
+                 alpha=0.2) +
+  scale_edge_width(range=c(0.1,5))+
+  geom_node_point(aes(colour=community))
+
+g + theme_graph()
+```
+
+# Building Interactive Network Graph with VisNetwork
+## Data preparation
+```{r}
+
+GAStech_edges_aggregated <- GAStech_edges %>%
+  left_join(GAStech_nodes, by = c("sourceLabel"="label"))%>%
+  rename(from=id)%>%
+  left_join(GAStech_nodes, by = c("targetLabel"="label"))%>%
+  rename(to=id)%>%
+  filter(MainSubject=="Work related")%>%
+  group_by(from,to)%>%
+  summarise(weight=n())%>%
+  filter(from!=to)%>%
+  filter(weight>1)%>%
+  ungroup()
+```
+
+## Plotting the first interactive network graph
+```{r}
+visNetwork(GAStech_nodes,
+           GAStech_edges_aggregated)%>%
+  visIgraphLayout("layout_with_fr") # can choose from igraph layouts
+```
+
+## Working with visual attributes - Nodes
+```{r}
+GAStech_nodes <- GAStech_nodes %>%
+  rename(group=Department)
+```
+
+```{r}
+visNetwork(GAStech_nodes,
+           GAStech_edges_aggregated)%>%
+  visIgraphLayout("layout_with_fr")%>%
+  visLegend()%>%
+  visLayout(randomSeed=123) #set random
+```
+
+## Interactivity
+```{r}
+visNetwork(GAStech_nodes,
+           GAStech_edges_aggregated)%>%
+  visIgraphLayout("layout_with_fr")%>%
+  visOptions(highlightNearest = TRUE,
+             nodesIdSelection = TRUE)%>%
+  visLegend()%>%
+  visLayout(randomSeed=123) 
+
+```
