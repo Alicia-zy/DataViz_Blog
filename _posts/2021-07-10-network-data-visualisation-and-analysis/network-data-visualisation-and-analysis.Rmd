@@ -53,7 +53,6 @@ GAStech_edges <- read_csv("data/GAStech_email_edge-v2.csv")
 ```
 
 ## Reviewing the imported data 
-
 SentDate is a character data instead of date data.
 
 ```{r}
