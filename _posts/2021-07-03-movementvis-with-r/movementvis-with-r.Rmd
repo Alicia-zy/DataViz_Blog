@@ -51,6 +51,7 @@ bgmap
 ```
 
 # Plotting Raster Layer
+
 ```{r}
 
 tmap_mode("plot") #plot: static version
@@ -85,7 +86,8 @@ gps <- read_csv("data/aspatial/gps.csv")
 glimpse(gps)
 ```
 
-converting Data-Time Field
+## converting Data-Time Field
+
 ```{r}
 
 gps$Timestamp <- date_time_parse(gps$Timestamp, 
@@ -95,7 +97,8 @@ gps$id <- as_factor(gps$id) #from tidyverse package
 
 ```
 
-converting Aspatial Data into a Simple Feature Data Frame
+## converting Aspatial Data into a Simple Feature Data Frame
+
 ```{r}
 
 gps_sf <- st_as_sf(gps,
@@ -104,7 +107,8 @@ gps_sf <- st_as_sf(gps,
 
 ```
 
-converting movement path from GPS Points
+## converting movement path from GPS Points
+
 ```{r}
 
 gps_path <- gps_sf %>%
