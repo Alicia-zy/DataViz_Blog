@@ -1,23 +1,74 @@
 ---
 title: "DataViz Assignment"
 description: |
-  A short description of the post.
+ This blog will focus on VAST Challenge 2021 Mini Challenge 3. Mini-Challenge 3 poses a social media and text analysis challenge. We will be given a collection of microblogs and emergency calls from the days surrounding the disappearance. Based on two datasets, we will evaluate the changing levels of risk to the public and recommend actions. 
+  
 author:
   - name: Alicia Zhang
     url: https://www.linkedin.com/in/alicia-zhang-22a1a6140/
+    affiliation: School of Computing and Information Systems, Singapore Management University
+    affiliation_url: https://scis.smu.edu.sg/
 date: 07-11-2021
 output:
   distill::distill_article:
+    toc: true
+    toc_depth: 3
     self_contained: false
 ---
 
-
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, error = FALSE)
 ```
 
-Distill is a publication format for scientific and technical writing, native to the web.
+```{r}
 
-Learn more about using Distill at <https://rstudio.github.io/distill>.
+packages = c('raster','sf','lubridate',
+             'clock','tmap','tidyverse','rgdal')
+for (p in packages){
+  if(!require(p,character.only = T)){
+    install.packages(p)
+  }
+  library(p,character.only = T)
+}
+```
+
+Import csv data and check on the data type.
+
+```{r}
+events_1 <- read_csv("csv-1700-1830.csv")
+events_2 <- read_csv("csv-1831-2000.csv")
+events_3 <- read_csv("csv-2001-2131.csv")
+all_events <- bind_rows(events_1,events_2)
+all_events <- bind_rows(all_events, events_3) 
+
+glimpse(all_events ) #dbl: double class,hold numeric values with decimal points
+
+```
+
+## converting Data-Time Field
+
+```{r}
+all_events$`date(yyyyMMddHHmmss)`  <- ymd_hms(all_events$`date(yyyyMMddHHmmss)`)
+colnames(all_events)[2] <- "time"
+
+glimpse(all_events )
+```
+
+## Extracting sub data sets mbdata and ccdata
+
+```{r}
+mbdata <- all_events[all_events$type=="mbdata",] #3872 observations
+ccdata <- all_events[all_events$type=="ccdata",] #191 observations
+
+```
+
+Geospatial data plot
+
+```{r}
+Abila_st <- st_read(dsn="data/Geospatial",
+                    layer="Abila")
+
+
+```
 
 
