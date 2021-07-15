@@ -17,6 +17,23 @@
     "input_file": {}
   },
   {
+    "path": "posts/2021-07-11-dataviz-assignment/",
+    "title": "DataViz Assignment",
+    "description": "This blog will focus on VAST Challenge 2021 Mini Challenge 3. Mini-Challenge 3 poses a social media and text analysis challenge. We will be given a collection of microblogs and emergency calls from the days surrounding the disappearance. Based on two datasets, we will evaluate the changing levels of risk to the public and recommend actions.",
+    "author": [
+      {
+        "name": "Alicia Zhang",
+        "url": "https://www.linkedin.com/in/alicia-zhang-22a1a6140/"
+      }
+    ],
+    "date": "2021-07-11",
+    "categories": [],
+    "contents": "\n\n\npackages = c('raster','sf','lubridate',\n             'clock','tmap','tidyverse','rgdal')\nfor (p in packages){\n  if(!require(p,character.only = T)){\n    install.packages(p)\n  }\n  library(p,character.only = T)\n}\n\n\n\nImport csv data and check on the data type.\n\n\nevents_1 <- read_csv(\"csv-1700-1830.csv\")\nevents_2 <- read_csv(\"csv-1831-2000.csv\")\nevents_3 <- read_csv(\"csv-2001-2131.csv\")\nall_events <- bind_rows(events_1,events_2)\nall_events <- bind_rows(all_events, events_3) \n\nglimpse(all_events ) #dbl: double class,hold numeric values with decimal points\n\n\nRows: 4,063\nColumns: 7\n$ type                   <chr> \"mbdata\", \"mbdata\", \"mbdata\", \"mbdata…\n$ `date(yyyyMMddHHmmss)` <dbl> 2.014012e+13, 2.014012e+13, 2.014012e…\n$ author                 <chr> \"POK\", \"maha_Homeland\", \"Viktor-E\", \"…\n$ message                <chr> \"Follow us @POK-Kronos\", \"Don't miss …\n$ latitude               <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, N…\n$ longitude              <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, N…\n$ location               <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, \"…\n\nconverting Data-Time Field\n\n\nall_events$`date(yyyyMMddHHmmss)`  <- ymd_hms(all_events$`date(yyyyMMddHHmmss)`)\ncolnames(all_events)[2] <- \"time\"\n\nglimpse(all_events )\n\n\nRows: 4,063\nColumns: 7\n$ type      <chr> \"mbdata\", \"mbdata\", \"mbdata\", \"mbdata\", \"mbdata\", …\n$ time      <dttm> 2014-01-23 17:00:00, 2014-01-23 17:00:00, 2014-01…\n$ author    <chr> \"POK\", \"maha_Homeland\", \"Viktor-E\", \"KronosStar\", …\n$ message   <chr> \"Follow us @POK-Kronos\", \"Don't miss a moment!  Fo…\n$ latitude  <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…\n$ longitude <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…\n$ location  <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, \"Egeou St / Pa…\n\nExtracting sub data sets mbdata and ccdata\n\n\nmbdata <- all_events[all_events$type==\"mbdata\",] #3872 observations\nccdata <- all_events[all_events$type==\"ccdata\",] #191 observations\n\n\n\n1. Using visual analytics, characterize the different types of content in the dataset. What distinguishes meaningful event reports from typical chatter from junk or spam? Please limit your answer to 8 images and 500 words.\n\n\n\n",
+    "preview": {},
+    "last_modified": "2021-07-15T11:19:23+08:00",
+    "input_file": "dataviz-assignment.knit.md"
+  },
+  {
     "path": "posts/2021-07-10-network-data-visualisation-and-analysis/",
     "title": "Network Data Visualisation and Analysis",
     "description": "We will explore ways to visualize network data using R in this post.",

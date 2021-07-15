@@ -1,7 +1,7 @@
 ---
 title: "Text Visualization"
 description: |
-  A short description of the post.
+  We will explore ways to visualize text data using R in this blog.
 author:
   - name: Alicia Zhang
     url: https://www.linkedin.com/in/alicia-zhang-22a1a6140/

@@ -8,7 +8,7 @@ author:
     url: https://www.linkedin.com/in/alicia-zhang-22a1a6140/
     affiliation: School of Computing and Information Systems, Singapore Management University
     affiliation_url: https://scis.smu.edu.sg/
-date: 07-11-2021
+date: 07-12-2021
 output:
   distill::distill_article:
     toc: true
@@ -19,6 +19,7 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, error = FALSE)
 ```
+
 
 ```{r}
 
@@ -45,7 +46,7 @@ glimpse(all_events ) #dbl: double class,hold numeric values with decimal points
 
 ```
 
-## converting Data-Time Field
+#### converting Data-Time Field
 
 ```{r}
 all_events$`date(yyyyMMddHHmmss)`  <- ymd_hms(all_events$`date(yyyyMMddHHmmss)`)
@@ -54,7 +55,7 @@ colnames(all_events)[2] <- "time"
 glimpse(all_events )
 ```
 
-## Extracting sub data sets mbdata and ccdata
+#### Extracting sub data sets mbdata and ccdata
 
 ```{r}
 mbdata <- all_events[all_events$type=="mbdata",] #3872 observations
@@ -62,13 +63,7 @@ ccdata <- all_events[all_events$type=="ccdata",] #191 observations
 
 ```
 
-Geospatial data plot
+#### 1.	Using visual analytics, characterize the different types of content in the dataset. What distinguishes meaningful event reports from typical chatter from junk or spam? Please limit your answer to 8 images and 500 words.
 
-```{r}
-Abila_st <- st_read(dsn="data/Geospatial",
-                    layer="Abila")
-
-
-```
 
 

@@ -1,7 +1,7 @@
 ---
 title: "Network Data Visualisation and Analysis"
 description: |
-  We will explore ways to visualize network data using R in this post.
+  We will explore ways to visualize network data using R in this blog.
 author:
   - name: Alicia Zhang
     url: https://www.linkedin.com/in/alicia-zhang-22a1a6140/
