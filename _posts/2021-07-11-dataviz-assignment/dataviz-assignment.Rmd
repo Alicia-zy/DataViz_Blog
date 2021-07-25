@@ -61,14 +61,22 @@ Text transcripts of emergency dispatches by the Abila, Kronos local police and f
 4.If you solved this mini-challenge in 2014, how did you approach it differently this year?
 
 # 2.0 Literature Review 
+[Vast Challenge 2014-Tianjin University](http://visualdata.wustl.edu/varepository/VAST%20Challenge%202014/challenges/MC3%20-%20Real-Time,%20Streaming%20Social%20Media/entries/Tianjin%20University/)
 
-This is the same competition as in 2014 and we will review those winning projects before doing the analysis. 
+This is the same competition as in 2014 and we will review those winning projects before doing the analysis. Below analysis is mainly conducted on 
 
-### 2.1 
+### 2.1 Real time social media analysis
 
-### 2.2 
+This interface combined statistical analysis(bar chart), text analysis(word cloud) and geospatial analysis(maps) together. It marked all call center data in the map and categorised risks levels  by colours. When changing time, both microblogs and call centers data will be shown. This gives a full picture of things. In R, we can present most frequent word using wordcloud and microblogs data using DT table. We can also draw maps using tmap. We need to think about how to combine different graphs, tables and data in maps together and provide realTime feedback. 
 
-### 2.3
+![](image/LR_text.png){width=400}
+
+### 2.2  Network analysis
+
+This project adopted network analysis which can be used to detect the relationships of the re-tweets.From the network graphs, we can filter out those spam/junk tweets accounts which are ignored by other users. It can also help us to find out influential tweets accounts containing meaning information. In the R, package visNetwork is a powerful tool that can serve the same purpose. The good thing about this package is it's able to plot interactive graphs. It means that by clicking on the nodes, we can detect sub-networks and the relationships among the smaller social network community. 
+
+![](image/LR_Network.png){width=400}
+
 
 # 3.0 Data Preporcessing
 
@@ -107,7 +115,7 @@ glimpse(all_events ) #dbl: double class,hold numeric values with decimal points
 
 ```
 
-#### 3.3 converting Data-Time Field
+### 3.3 converting Data-Time Field
 
 After checking the data types, we found that column date is in double class and need to convert to timestamp format. 
 
@@ -219,7 +227,7 @@ ggplot(ccdata_count,aes(x=reorder(cleaned,n), y=n)) +
   ggtitle("Number of calls by Incident type")+
   xlab("Number of calls") + ylab("Incident type")+
   theme_classic()+
-  geom_text(aes(label = n),hjust=1,colour = "white",size=8)+
+  geom_text(aes(label = n),hjust=1,colour = "white",size=4)+
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
@@ -417,13 +425,13 @@ visNetwork(RT_nodes,
 
 Comparing this network graph with the bar chart in section 4.1, we can find that KronosQuoth and Clevvah4Evah (top 1 and 2 who posted tweets) are at the edge of the network and don't have any link with other users. We can exclude them from our analysis. megaMan and POK has some influence in their respective networks. KronosStar, Homeandilluminations and some media accounts (e.g. AbilaPost and NewsOnlineToday) are more influential tweets users and their messages could be more meaningful. 
 
-![](image/Network_1.png){height=500}
+![](image/Network_1.png){width=80%}
 
-![](image/megaMan.png){height=500}
+![](image/megaMan.png){width=80%}
 
-![](image/POK.png){height=500}
+![](image/POK.png){width=80%}
 
-![](image/KronosStar.png){height=500}
+![](image/KronosStar.png){width=80%}
 
 ### 4.4  Maps 
 
