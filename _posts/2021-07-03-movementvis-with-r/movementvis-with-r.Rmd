@@ -80,7 +80,6 @@ Abila_st <- st_read(dsn="data/Geospatial",
 # Importing Aspatial Data
 
 ```{r}
-
 gps <- read_csv("data/aspatial/gps.csv")
 glimpse(gps)
 ```
